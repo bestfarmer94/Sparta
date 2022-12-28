@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+    <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
+    <style>
+        * {
+            font-family: 'Nanum Gothic', sans-serif;
+        }
+
+        .mytitle {
+            background-color: green;
+            color: white;
+            height: 350px;
+            width: 100%;
+            /*url 앞콤마 앞쪽 문구는 어둡게 출력하는 문구다. 0.5 부분을 조절하면 밝기가 조절된다.*/
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("http://cdn.ggilbo.com/news/photo/202211/943475_776489_67.png");
+            background-position: center 30%;
+            background-size: cover;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mypost {
+            max-width: 500px;
+            width: 95%;
+            margin: 20px auto 0px auto;
+            box-shadow: 0px 0px 3px 0px gray;
+            padding: 20px;
+        }
+
+        .mybtn {
+            margin-top: 10px;
+        }
+
+        .cards {
+            max-width: 500px;
+            width: 95%;
+            margin: 20px auto 10px auto;
+        }
+        .card {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mytitle">
+        <h1>데프트 팬명록</h1>
+    </div>
+    <div class="mypost">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput">닉네임</label>
+        </div>
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea"
+                style="height: 100px"></textarea>
+            <label for="floatingTextarea">응원댓글</label>
+        </div>
+        <div class="mybtn">
+            <button type="button" class="btn btn-dark">응원 남기기</button>
+        </div>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                    <p>새로운 앨범 너무 멋져요</p>
+                    <footer class="blockquote-footer">호빵맨</footer>
+                </blockquote>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                    <p>새로운 앨범 너무 멋져요</p>
+                    <footer class="blockquote-footer">호빵맨</footer>
+                </blockquote>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                    <p>새로운 앨범 너무 멋져요</p>
+                    <footer class="blockquote-footer">호빵맨</footer>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

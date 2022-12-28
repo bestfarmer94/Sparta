@@ -1,0 +1,50 @@
+JQuery
+
+$('#url').val('뭔가를 입력하고 싶다')
+> 화면에 출력됨
+$('#url').val()
+> 화면에 적은 값
+
+$('#post-box').hide()
+> 화면에서 사라짐
+$('#post-box').show()
+> 화면에서 보임
+
+백틱(``) : ~키 자리.
+let temp_html = `<button>나는 버튼이다</button>`
+$('#cards-box').append(temp_html)
+>cards-box 자리에 버튼이 추가가 됨.
+
+temp_html에 카드 통째로 저장.
+let temp_html = '<div class="col">
+        <div class="card">
+          <img src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
+               class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">여기에 제목이 들어갑니다.</h5>
+            <p class="card-text">여기에 내용이 들어가지요.</p>
+            <p>⭐⭐⭐</p>
+            <p class="mycomment">여기에 코멘트가 들어갑니다.</p>
+          </div>
+        </div>
+      </div>'
+$('#cards-box').append(temp_html)
+> card가 하나 추가 됨.
+
+
+let mytitle = '타이타닉'
+let temp_html = '<div class="col">
+        <div class="card">
+          <img src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
+               class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">${mytitle}</h5>
+            <p class="card-text">여기에 내용이 들어가지요.</p>
+            <p>⭐⭐⭐</p>
+            <p class="mycomment">여기에 코멘트가 들어갑니다.</p>
+          </div>
+        </div>
+      </div>'
+$('#cards-box').append(temp_html)
+> 제목에 mytitle 의 값이 들어감. 여기서는 '타이타닉'
+

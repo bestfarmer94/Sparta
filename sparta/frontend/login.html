@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Jua', sans-serif;
+        }
+      .mytitle {
+        color: white;
+        width : 300px;
+        height: 200px;
+        text-align: center;
+
+        background-image: url("https://www.ancient-origins.net/sites/default/files/field/image/Agesilaus-II-cover.jpg");
+        background-size: cover;
+        background-position: center;
+        border-radius: 10px;
+        padding-top: 40px;
+      }
+      .wrap {
+        width : 300px;  /*정해진 너비가 있어야 auto를 통해 가운데로 오게 될 수 있다.*/
+        margin : auto;  /*밀 수 있는 만큼 모든 방향을 최대한 밀어라? 라고 한다.*/
+      }
+    </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="mytitle">
+      <h1>로그인 페이지</h1>
+      <h5>아이디, 비밀번호를 입력해주세요.</h5>
+    </div>
+    <p>ID : <input type="text"/></p>
+    <p>PW : <input type="text"/></p>
+    <button>로그인하기</button>
+  </div>
+
+</body>
+</html>

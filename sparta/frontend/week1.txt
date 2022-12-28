@@ -1,0 +1,68 @@
+이모티콘 모음 : https://kr.piliapp.com/facebook-symbols/
+
+---------
+JavaScript != Java (바다와 바다코끼리의 느낌, 아무 관련이 없다.)
+
+let a = 5
+let name = 'kyungyeon'
+
+let a_list = ['수박', '참외', '배']
+a_list[0] = '수박'
+
+a_list.push('감')
+a_list = ['수박', '참외', '배', '감']
+
+b_list = ['철수', '영희']
+a_list.push(b_list)
+a_list = ['수박', '참외', '배', '감', Array(2)]
+a_list[4][0] = '철수'
+
+key : value
+let a_dict = {'name':'bob', 'age':27}
+a_dict['name'] = 'bob'
+
+a_dict['height'] = 180
+a_dict = {'name':'bob', 'age':27, 'height':180}
+
+--------
+let myemail = 'sparta@gmail.com'
+myemail.split('@') = ['sparta', 'gmail.com']
+myemail.split('@')[1] = 'gmail.com'
+myemail.split('@')[1].split('.') = ['gmail', 'com']
+myemail.split('@')[1].split('.')[0] = 'gmail'
+
+--------
+
+    function sum(a,b){
+        alert('계산을 하자')
+        return a+b
+    }
+    let result = sum(2,3)
+    alert(result)
+
+
+alert()
+console 창에만 뜨게 하려면
+console.log()
+
+let a_list = ['수박', '참외', '배']
+for(let i=0; i<a_list.length; i++){
+    console.log(a_list[i])
+}
+
+let scores = [
+	{'name':'철수', 'score':90},
+	{'name':'영희', 'score':85},
+	{'name':'민수', 'score':70},
+    {'name':'형준', 'score':50},
+    {'name':'기남', 'score':68},
+    {'name':'동희', 'score':30},
+]
+
+for (let i = 0 ; i < scores.length ; i++) {
+    if(scores[i]['score'] > 70){
+        console.log(scores[i]['name'])
+    }
+}
+70점 넘는 이름만 출력됨.
+
