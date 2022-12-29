@@ -1,0 +1,115 @@
+👉패키지? 라이브러리? →
+Python 에서 패키지는 모듈(일종의 기능들 묶음)을 모아 놓은 단위입니다. 이런 패키지 의 묶음을 라이브러리 라고 볼 수
+있습니다. 지금 여기서는 외부 라이브러리를 사용하기 위해서 패키지를 설치합니다.
+즉, 여기서는 패키지 설치 = 외부 라이브러리 설치!
+
+가상환경(virtual environment)은
+같은 시스템에서 실행되는 다른 파이썬 응용 프로그램들의 동작에 영향을 주지 않기 위해, 파이썬 배포 패키지들을 설
+치하거나 업그레이드하는 것을 가능하게 하는 격리된 실행 환경 입니다.
+
+파일 -> 설정 -> 프로젝트 : ?? -> python 인터프리터 -> + -> (여기서는 requests 썼음.)
+
+
+-------------------
+👉크롤링 (bs4 설치 했음)
+
+import requests
+from bs4 import BeautifulSoup
+
+headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
+data = requests.get('주소',headers=headers)
+
+soup = BeautifulSoup(data.text, 'html.parser')
+
+# 코딩 시작
+
+
+영화 제목을 갖고 온다 하면
+영화 제목 우클릭 > 검사 > 그 부분의 코드가 뜸. > copy > copy selector
+
+
+👉select_one
+title = soup.select_one('#old_content > table > tbody > tr:nth-child(2) > td.title > div > a')
+print(title)            #selector 출력
+print(title.text)       #제목만 뜨게 된다.
+print(title['href'])    #href 주소값.
+
+selector copy 해온 코드
+#old_content > table > tbody > tr:nth-child(3) > td.title > div > a
+#old_content > table > tbody > tr:nth-child(4) > td.title > div > a
+앞 부분이 다 같은 것을 확인.
+
+
+👉select
+#tr에 저장된 데이터를 전부 가져옴.
+movies = soup.select('#old_content > table > tbody > tr')
+print(movies)
+
+for movie in movies:
+    a = movie.select_one('td.title > div > a')      #tr에 저장된 데이터 중 title 부분만 가져오기.
+    if a is not None:                               #가끔 이상한 데이터가 있는데 None 이라고 뜨게 된다. 이를 걸러냄.
+        title = a.text
+        rank = movie.select_one('td:nth-child(1) > img')['alt']
+        star = movie.select_one('td.point').text
+        print(title, rank, star)
+
+
+-------------
+👉 **RDBMS(SQL)**
+행/열의 생김새가 정해진 엑셀에 데이터를 저장하는 것과 유사합니다.
+데이터 50만 개가 적재된 상태에서, 갑자기 중간에 열을 하나 더하기는 어려울 것입니다.
+그러나, 정형화되어 있는 만큼, 데이터의 일관성이나 / 분석에 용이할 수 있습니다.
+ex) MS-SQL, My-SQL 등
+
+👉 **No-SQL**
+딕셔너리 형태로 데이터를 저장해두는 DB입니다.
+고로 데이터 하나 하나 마다 같은 값들을 가질 필요가 없게 됩니다.
+자유로운 형태의 데이터 적재에 유리한 대신, 일관성이 부족할 수 있습니다.
+ex) MongoDB
+
+
+👉 DB 환경 설정 [ pymongo, dnspython 패키지 설치 ]
+
+mongoDB Atlas 화면 > Cluster0 옆의 Connect > Connect your application > Python 3.6 or later > url 복사
+
+from pymongo import MongoClient
+client = MongoClient('여기에 URL 입력')
+db = client.dbsparta
+
+url 변경이 필요함.
+         mongodb+srv://<아이디>:<비밀번호>@cluster0.8vasl6v.mongodb.net/클러스터0?retryWrites=true&w=majority
+결과 >    mongodb+srv://test:sparta@cluster0.8vasl6v.mongodb.net/Cluster0?retryWrites=true&w=majority
+
+
+👉DB 집어 넣기
+
+doc = {
+    'name': 'bob',
+    'age': 27
+}
+
+db.users.insert_one(doc)
+
+
+👉저장된 DB 보는법
+
+mongoDB Atlas 화면 > browse collections 에서 직접 볼 수도 있고,
+
+전체 출력.
+all_users = list(db.users.find({}, {'_id':False}))  # id는 보기 싫어서 뒤의 코드가 있다.
+for user in all_users:
+    print(user)
+
+조건에 맞는 하나만 찾고 싶다.
+user = db.users.find_one({'name':'bobby'})
+print(user)
+print(user['age'])
+
+
+👉DB 수정 / 삭제
+
+수정
+db.users.update_one({'name':'bobby'},{'$set':{'age':19}})   # 조건, 수정
+
+삭제
+db.users.delete_one({'name':'bobby'})

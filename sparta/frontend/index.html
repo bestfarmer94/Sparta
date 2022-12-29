@@ -83,6 +83,45 @@ crossorigin="anonymous"></script>
     }
   </style>
   <script>
+    $(document).ready(function () {
+      listing();
+    });
+
+    function listing() {
+      console.log('화면 로딩 후 잘 실행되었습니다');
+      $.ajax({
+          type: "GET",
+          url: "http://spartacodingclub.shop/web/api/movie",
+          data: {},
+          success: function (response) {
+              console.log(response['movies'])
+            let rows = response['movies']
+            for(let i=0; i<rows.length; i++){
+              let img = rows[i]['image']
+              let title = rows[i]['title']
+              let desc = rows[i]['desc']
+              let comment = rows[i]['comment']
+              let star = rows[i]['star']
+              let star_image = '⭐'.repeat(star)
+              let temp_html = `<div class="col">
+                                <div class="card">
+                                  <img src=${img}
+                                       class="card-img-top" alt="...">
+                                  <div class="card-body">
+                                    <h5 class="card-title">${title}</h5>
+                                    <p class="card-text">${desc}</p>
+                                    <p>${star_image}</p>
+                                    <p class="mycomment">${comment}</p>
+                                  </div>
+                                </div>
+                              </div>`
+
+              $('#cards-box').append(temp_html)
+            }
+          }
+      })
+    }
+
     function open_box(){
       $('#post-box').show()
     }
@@ -126,54 +165,6 @@ crossorigin="anonymous"></script>
   <div class="wrap">
     <!-- row-cols-md-? 를 건드리면 한 줄에 몇개씩 인지 바뀐다. -->
     <div id="cards-box" class="row row-cols-1 row-cols-md-4 g-4">
-      <div class="col">
-        <div class="card">
-          <img src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
-               class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">여기에 제목이 들어갑니다.</h5>
-            <p class="card-text">여기에 내용이 들어가지요.</p>
-            <p>⭐⭐⭐</p>
-            <p class="mycomment">여기에 코멘트가 들어갑니다.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card">
-          <img src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
-               class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">여기에 제목이 들어갑니다.</h5>
-            <p class="card-text">여기에 내용이 들어가지요.</p>
-            <p>⭐⭐⭐</p>
-            <p class="mycomment">여기에 코멘트가 들어갑니다.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card">
-          <img src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
-               class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">여기에 제목이 들어갑니다.</h5>
-            <p class="card-text">여기에 내용이 들어가지요.</p>
-            <p>⭐⭐⭐</p>
-            <p class="mycomment">여기에 코멘트가 들어갑니다.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card">
-          <img src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
-               class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">여기에 제목이 들어갑니다.</h5>
-            <p class="card-text">여기에 내용이 들어가지요.</p>
-            <p>⭐⭐⭐</p>
-            <p class="mycomment">여기에 코멘트가 들어갑니다.</p>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </body>
