@@ -1,0 +1,127 @@
+웹서비스 런칭
+👉클라이언트의 요청에 항상 응답해줄 수 있는 서버 필요
+👉AWS 클라우드 서비스 EC2 사용권을 구입
+
+
+👉EC2 서버 종료하는 방법 (1년 후 자동결제 방지!)
+대상 인스턴스에 마우스 우클릭 > '인스턴스 상태' 를 클릭합니다. > 종료
+
+
+👉AWS EC2에 접속하기
+gitbash 프로그램 실행 >
+-i 암호 키페어 파일 끌어오기 ubuntu@AWS에적힌내아이피
+$ ssh -i /c/Users/sjasj/Desktop/sparta_web.pem ubuntu@43.200.6.89
+Yes를 입력
+
+
+👉서버 세팅하기
+gitbash 그대로 쓰면 된다.
+5줄을 한줄씩 넣어 주면 된다.
+ctrl+v를 안먹어서 우클릭 paste로 진행
+
+# python3 -> python
+# 원래 python3 하고 명령을 내리는데, python 하고 명령을 내리겠다. 라고 한다.
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+
+# pip3 -> pip
+# pip라는 패키지 마법사를 설치한다. 패키지 설치를 도와 준다고 한다.
+sudo apt-get update
+sudo apt-get install -y python3-pip
+sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+
+# port forwarding
+# 80으로 들어온 애를 5000으로 연결 시켜줘라.
+# localhost:5000 에서 5000을 떼는 명령어.
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 5000
+
+
+👉 리눅스 명령어
+ls: 내 위치의 모든 파일을 보여준다.
+pwd: 내 위치(폴더의 경로)를 알려준다.
+mkdir: 내 위치 아래에 폴더를 하나 만든다.
+cd [갈 곳]: 나를 [갈 곳] 폴더로 이동시킨다.
+cd .. : 나를 상위 폴더로 이동시킨다.
+cp -r [복사할 것] [붙여넣기 할 것]: 복사 붙여넣기
+rm -rf [지울 것]: 지우기
+sudo [실행 할 명령어]: 명령어를 관리자 권한으로 실행한다.
+sudo su: 관리가 권한으로 들어간다. (나올때는 exit으로 나옴)
+
+
+👉 FileZilla
+키면 왼쪽이 내 컴퓨터 오른쪽이 산 컴퓨터
+
+사용법
+좌측 상단에 본체 3개 클릭 > new site > 이름 대충 정해주고
+> 프로토콜 SFTP로 변경 > 호스트 AWS 퍼블릭IP > 포트 22(고정)
+> 로그온 키 파일 > 사용자 ubuntu > 파일 pem 파일 > 연결, 확인
+> sparta 폴더 > 파일/폴더 옮기기(app.py, static 폴더, templates)   #venv 옮기면 안된다.
+
+
+👉 gitbash로 돌아와서 패키지 설치하기
+> python app.py 엔터
+하면 계속 flask, pymongo, dnspython 등 패키지들 필요한걸 알려준다.
+
+> pip install flask
+이런식으로 필요한거 다 깔아주면 된다.
+
+
+👉 서버 열린거 같으면
+AWS에서 ip주소:5000 주소창에 해주기.
+ex) 43.200.6.89:5000 주소창에 적어보면 된다. :5000 빼도 된다.
+(네이버도 사실 뒤에 80이 숨겨져 있다고 한다.)
+
+
+안될텐데, AWS 인스턴스 > 보안 > 보안그룹 (~~wizard-1 이런식)
+> 인바운드 규칙 편집 > 추가 > 사용자 지정 TCP 그대로 두고, 5000 anywhere(IPv4) > 80도 똑같이 추가.
+
+
+홈페이지 열리는걸 확인할 수 있다.
+하지만 gitbash 끄면 같이 꺼져 버리는데, 이걸 해결해야 함.
+
+
+👉 nohup 설정 (상시로 키는 방법)
+git bash 다시 키면, 그 상태에서 키보드 방향키 위 버튼을 누르면, 마지막으로 썼던 것이 나온다. > 엔터
+
+이런게 뜬다.
+ubuntu@ip-172-31-8-62:~$
+
+ls 하면 폴더 이름 나온다.
+ubuntu@ip-172-31-8-62:~$ ls
+ubuntu@ip-172-31-8-62:~$ cd sparta
+
+ls 로 다시 확인 해주고,
+pyhon app.py 해주면 서버 다시 열린다.
+ctrl c 하면 서버 닫힌다.
+
+
+👉 상시로 키는 코드
+nohup python app.py &
+위 코드를 입력 해주면 gitbash를 꺼도, 사이트 안꺼진다.
+
+👉 반대로 해제 하는(닫는) 코드
+ps -ef | grep 'python app.py' | awk '{print $2}' | xargs kill
+
+
+
+👉 도메인 연결하기
+가비아 > dns 탭이 있다. > 원하는 도메인 클릭 > dns 설정
+> 호스트 : @ > 값/위치 : AWS ip 숫자만 입력.(http 이런게 없어야 한다는 뜻)
+> TTL 이런거 그냥 두고 확인 > 저장
+
+이러면 도메인으로 연결이 된다.
+
+
+
+---------------------------------------
+👉 내 사이트 og 설정
+배포 할 때 메인 이미지 라던가 제목이라던가 뜨는거
+
+index.html 에서 head 적당한 곳에.
+<meta property="og:title" content="내 사이트의 제목" />
+<meta property="og:description" content="보고 있는 페이지의 내용 요약" />
+<meta property="og:image" content="이미지URL" />
+
+서버 끄기   >   파일 바꿔치기 [삭제 > 파일 다시 올리기 ]   >   다시 열기
+
+👉 og 태그 수정한게 보고 싶다면, 카카오톡은 사이트들을 저장을 해놓기 때문에, 초기화를 해 주어야 한다.
+카카오톡 og 태그 초기화 하기: https://developers.kakao.com/tool/clear/og

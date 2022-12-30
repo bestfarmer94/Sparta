@@ -1,0 +1,87 @@
+👉서버 만들기
+
+Flask 패키지 설치
+- Flask 프레임워크: 서버를 구동시켜주는 편한 코드 모음. 서버를 구동하려면 필요한 복잡한 일들을 쉽게 가져다 쓸 수 있습니다.
+
+    👉 프레임워크를 쓰지 않으면 태양초를 빻아서 고추장을 만드는 격!
+    프레임워크는 3분 요리/소스 세트라고 생각하면 되겠습니다!
+
+👉시작 코드
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+   return 'This is Home!'
+
+if __name__ == '__main__':
+   app.run('0.0.0.0',port=5000,debug=True)
+
+👉확인
+http://localhost:5000/ 접속이 될거임.
+@app.route('/mypage')
+def mypage():
+   return 'This is Mypage!'
+http://localhost:5000/mypage 이런식.
+
+👉세팅
+ㄴstatic 폴더 (이미지, css파일을 넣어둡니다)
+ ㄴtemplates 폴더 (html파일을 넣어둡니다)
+ ㄴapp.py 파일
+
+app.py 에서 import 부분과 아래 return 부분만 수정 하면됨.
+
+from flask import Flask, render_template
+@app.route('/')
+def home():
+   return render_template('index.html')
+
+
+👉Get 방식 > 주로 데이터 조회(READ) 할 때 사용
+
+일단 Get이든, Post이든 import 추가로 더해줘야 함.
+from flask import Flask, render_template, request, jsonify
+
+app.py 파일 > Get요청 API코드
+
+@app.route('/test', methods=['GET'])
+def test_get():
+   title_receive = request.args.get('title_give')
+   print(title_receive)
+   return jsonify({'result':'success', 'msg': '이 요청은 GET!'})
+
+
+html 파일 > GET 요청 확인 Ajax코드
+
+$.ajax({
+    type: "GET",
+    url: "/test?title_give=봄날은간다",
+    data: {},
+    success: function(response){
+       console.log(response)
+    }
+  })
+
+
+👉Post 방식 > 대부분 이거 사용 하게 됨.
+
+@app.route('/test', methods=['POST'])
+def test_post():
+    title_receive = request.form['title_give']
+    print(title_receive)
+    return jsonify({'result':'success', 'msg': '이 요청은 POST!'})
+
+$.ajax({
+    type: "POST",
+    url: "/test",
+    data: { title_give:'봄날은간다' },
+    success: function(response){
+    console.log(response)
+    }
+})
+
+👉 잔잔바리 기술
+새로 고침 코드 (Ajax 코드 안)
+success: function (response) {
+    window.location.reload()    // 새로 고침.
+}
