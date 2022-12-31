@@ -125,3 +125,5 @@ index.html 에서 head 적당한 곳에.
 
 👉 og 태그 수정한게 보고 싶다면, 카카오톡은 사이트들을 저장을 해놓기 때문에, 초기화를 해 주어야 한다.
 카카오톡 og 태그 초기화 하기: https://developers.kakao.com/tool/clear/og
+
+#
