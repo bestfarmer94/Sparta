@@ -15,7 +15,7 @@ options.add_argument("headless")
 id = "sjasjaruddus@naver.com"
 pwd = "1q2w3e4r!"
 
-driver = webdriver.Chrome('./chromedriver.exe', options=options)
+driver = webdriver.Chrome()
 driver.get("https://lostark.game.onstove.com/Market")
 
 time.sleep(2)
@@ -24,35 +24,20 @@ elem.send_keys(id)
 elem = driver.find_element(By.XPATH, '//*[@id="user_pwd"]')
 elem.send_keys(pwd)
 elem.send_keys(Keys.RETURN)
-
 time.sleep(2)
 elem = driver.find_element(By.XPATH, '//*[@id="lostark-wrapper"]/div/main/div/div[2]/a[2]').click()
 time.sleep(2)
-green_fish = math.ceil(float(driver.find_element(By.XPATH, '//*[@id="tbodyItemList"]/tr[1]/td[2]/div/em').text))
-green_meat = math.ceil(float(driver.find_element(By.XPATH, '//*[@id="tbodyItemList"]/tr[2]/td[2]/div/em').text))
-green_relic = math.ceil(float(driver.find_element(By.XPATH, '//*[@id="tbodyItemList"]/tr[3]/td[2]/div/em').text))
-blue_fish = math.ceil(float(driver.find_element(By.XPATH, '//*[@id="tbodyItemList"]/tr[4]/td[2]/div/em').text))
-blue_meat = math.ceil(float(driver.find_element(By.XPATH, '//*[@id="tbodyItemList"]/tr[5]/td[2]/div/em').text))
-blue_relic = math.ceil(float(driver.find_element(By.XPATH, '//*[@id="tbodyItemList"]/tr[6]/td[2]/div/em').text))
-white_fish = math.ceil(float(driver.find_element(By.XPATH, '//*[@id="tbodyItemList"]/tr[7]/td[2]/div/em').text))
-white_meat = math.ceil(float(driver.find_element(By.XPATH, '//*[@id="tbodyItemList"]/tr[8]/td[2]/div/em').text))
-white_relic = math.ceil(float(driver.find_element(By.XPATH, '//*[@id="tbodyItemList"]/tr[9]/td[2]/div/em').text))
+elem = driver.find_element(By.XPATH, '// *[ @ id = "itemList"] / thead / tr / th[1] / a').click()
+time.sleep(2)
 
-datetime.datetime.now().strftime('%Y/%m/%d')
-print(datetime.datetime.now().strftime('%Y/%m/%d'))
-doc = {
-	'date': datetime.datetime.now().strftime('%Y/%m/%d'),
-	'green_fish': green_fish,
-	'green_meat': green_meat,
-	'green_relic': green_relic,
-	'blue_fish': blue_fish,
-	'blue_meat': blue_meat,
-	'blue_relic': blue_relic,
-	'white_fish': white_fish,
-	'white_meat': white_meat,
-	'white_relic': white_relic
-}
-db.lostark.insert_one(doc)
+price_list = []
+for i in range(1, 10):
+	a = str(i)
+	xpath = '//*[@id="tbodyItemList"]/tr[' + a + ']/td[4]/div/em'
+	print(xpath)
+	price_list.append(round(float(driver.find_element(By.XPATH, xpath).text)))
+
+print(price_list)
 print('success')
 # print(elem)
 # assert "Python" in driver.title

@@ -43,8 +43,7 @@
 
         .content {
             width: 95%;
-            margin: 20px auto 20px auto;
-            padding: 20px;
+            margin: 20px;
 
             display: flex;
             flex-direction: row;
@@ -54,27 +53,36 @@
 
         .left {
             width: 95%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: left;
         }
 
         .left > form {
-            /*display: none;*/
+            margin: 20px auto 20px auto;
+            padding: 20px;
+            box-shadow: 0 0 3px 0 black;
         }
+
         .right {
             width: 95%;
+
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
+
+        .right > table {
+            margin: 20px auto 20px 20px;
+            box-shadow: 0 0 3px 0 black;
+        }
+
     </style>
     <script>
+        <!-- 테이블의 순서대로 가격 매길 예정, 0:고대 유물 ~ 12:최상급 오레하   -->
+        let price_list = new Array(13)
 
         $(document).ready(function () {
             set_temp()
+            set_price()
         })
 
         function set_temp() {
@@ -88,17 +96,56 @@
             })
         }
 
+        function set_price() {
+            $.ajax({
+                type: "GET",
+                url: "/today_price",
+                data: {},
+                success: function (response) {
+                    $('#temp').text(response['temp'])
+                }
+            })
+        }
+
         function crawling() {
             $.ajax({
                 type: "GET",
                 url: "/crawling",
                 data: {},
                 success: function (response) {
-                    console.log("real")
+                    for(let i=0; i<response['price_list'].length; i++){
+                        price_list[i] = response['price_list'][i]
+                        let price_name = '#price_' + i
+                        $(price_name).text(price_list[i])
+                    }
                 }
             })
         }
 
+        function load(){
+            window.location.reload()
+        }
+
+        function modify(){
+            for(let i=0; i<9; i++){
+                let input_name = '#input_' + i
+                let price_name = '#price_' + i
+                if($(input_name).val().length != 0) {
+                    $(price_name).text($(input_name).val())
+                }
+            }
+            window.location.reload()
+        }
+
+        function modify2(){
+            for(let i=9; i<13; i++){
+                let input_name = '#input_' + i
+                let price_name = '#price_' + i
+                if($(input_name).val().length != 0) {
+                    $(price_name).text($(input_name).val())
+                }
+            }
+        }
     </script>
 </head>
 <body>
@@ -110,50 +157,182 @@
 </div>
 <div class="content">
     <div class="left">
-        <form class="row g-3">
-            <div class="col-md-6">
-                <label for="inputEmail4" class="form-label">Email</label>
-                <input type="email" class="form-control" id="inputEmail4">
+        <div class="content">
+            <div class="left">
+                <form class="row g-3">
+                    <div class="col-12" style="text-align: center">
+                        <h1>영지 정보</h1>
+                    </div>
+                    <div class="col-12">
+                        <label for="name" class="form-label">닉네임</label>
+                        <input type="text" class="form-control" id="name" placeholder="꼭 닉네임 아니어도 되긴함.">
+                    </div>
+                    <div class="col-12" style="text-align: center">
+                        <button onclick="load()" type="submit" class="btn btn-primary">불러오기</button>
+                    </div>
+                    <div class="col-12">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="energy_recover" class="form-label">활동력 회복량</label>
+                        <input type="text" class="form-control" id="energy_recover" placeholder="숫자만 기입">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="energy_reduce" class="form-label">활동력 소모량 감소</label>
+                        <input type="text" class="form-control" id="energy_reduce" placeholder="숫자만 기입">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="gold_reduce" class="form-label">비용 감소</label>
+                        <input type="text" class="form-control" id="gold_reduce" placeholder="숫자만 기입">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="time_reduce" class="form-label">시간 감소</label>
+                        <input type="text" class="form-control" id="time_reduce" placeholder="숫자만 기입">
+                    </div>
+                    <div class="col-12" style="text-align: center">
+                        <button onclick="save()" type="submit" class="btn btn-primary">저장하기</button>
+                    </div>
+                </form>
             </div>
-            <div class="col-md-6">
-                <label for="inputPassword4" class="form-label">Password</label>
-                <input type="password" class="form-control" id="inputPassword4">
-            </div>
-            <div class="col-12">
-                <label for="inputAddress" class="form-label">Address</label>
-                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
-            </div>
-            <div class="col-12">
-                <label for="inputAddress2" class="form-label">Address 2</label>
-                <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-            </div>
-            <div class="col-md-6">
-                <label for="inputCity" class="form-label">City</label>
-                <input type="text" class="form-control" id="inputCity">
-            </div>
-            <div class="col-md-4">
-                <label for="inputState" class="form-label">State</label>
-                <select id="inputState" class="form-select">
-                    <option selected>Choose...</option>
-                    <option>...</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="inputZip" class="form-label">Zip</label>
-                <input type="text" class="form-control" id="inputZip">
-            </div>
-            <div class="col-12">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="gridCheck">
-                    <label class="form-check-label" for="gridCheck">
-                        Check me out
-                    </label>
+            <div class="right">
+                <div>
+                    <button onclick="crawling()" type="button" class="btn btn-dark">최저가 가져오기</button>
+                </div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">재료</th>
+                        <th scope="col">가격</th>
+                        <th scope="col">수정</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="table-light">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_3.png"/>
+                        </th>
+                        <td>고대 유물</td>
+                        <td id="price_0"></td>
+                        <td><input id="input_0" style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    <tr class="table-success">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_4.png"/>
+                        </th>
+                        <td>희귀한 유물</td>
+                        <td id="price_1">Thornton</td>
+                        <td><input id="input_1" style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    <tr class="table-primary">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_11.png"/>
+                        </th>
+                        <td>오레하 유물</td>
+                        <td id="price_2">@twitter</td>
+                        <td><input id="input_2" style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    <tr class="table-light">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_1_142.png"/>
+                        </th>
+                        <td>생선</td>
+                        <td id="price_3">Otto</td>
+                        <td><input id="input_3" style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    <tr class="table-success">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_8_72.png"/>
+                        </th>
+                        <td>자연산 진주</td>
+                        <td id="price_4">Thornton</td>
+                        <td><input id="input_4" style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    <tr class="table-primary">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_8_74.png"/>
+                        </th>
+                        <td>오레하 태양 잉어</td>
+                        <td id="price_5">@twitter</td>
+                        <td><input id="input_5" style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    <tr class="table-light">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_2_192.png"/>
+                        </th>
+                        <td>두툼한 생고기</td>
+                        <td id="price_6">Otto</td>
+                        <td><input id="input_6" style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    <tr class="table-success">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_2_204.png"/>
+                        </th>
+                        <td>질긴 가죽</td>
+                        <td id="price_7">Thornton</td>
+                        <td><input id="input_7" style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    <tr class="table-primary">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_8_67.png"/>
+                        </th>
+                        <td>오레하 두툼한...</td>
+                        <td id="price_8">@twitter</td>
+                        <td><input id="input_8" style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div>
+                    <button onclick="modify()" type="button" class="btn btn-primary">가격 수정하기</button>
+                </div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">재료</th>
+                        <th scope="col">가격</th>
+                        <th scope="col">수정</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="table-success">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_70.png"/>
+                        </th>
+                        <td>하급 오레하</td>
+                        <td>Otto</td>
+                        <td><input style="width: 55px; height: 25px;" type="text" class="form-control"></td>
+                    </tr>
+                    <tr class="table-primary">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_71.png"/>
+                        </th>
+                        <td>중급 오레하</td>
+                        <td>Thornton</td>
+                        <td></td>
+                    </tr>
+                    <tr class="table-danger">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_8_109.png"/>
+                        </th>
+                        <td>상급 오레하</td>
+                        <td>@twitter</td>
+                        <td>@fat</td>
+                    </tr>
+                    <tr class="table-info">
+                        <th scope="row">
+                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_11_29.png"/>
+                        </th>
+                        <td>최상급 오레하</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div>
+                    <button onclick="modify()" type="button" class="btn btn-primary">가격 수정하기</button>
                 </div>
             </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">Sign in</button>
-            </div>
-        </form>
+        </div>
     </div>
     <div class="right">
         <h1>디붕이네 공장</h1>
