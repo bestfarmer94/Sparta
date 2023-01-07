@@ -70,15 +70,48 @@
             justify-content: center;
         }
 
-        .right > table {
+        .table {
             margin-top: 20px;
             box-shadow: 0 0 3px 0 black;
+
+            border-right: 10px;
+            table-layout: fixed;
         }
     </style>
     <script>
-        <!-- 테이블의 순서대로 가격 매길 예정, 0:고대 유물 ~ 12:최상급 오레하   -->
-        let price = new Array(13)
+        // 테이블의 순서대로 가격 매길 예정, 0:고대 유물 ~ 12:최상급 오레하
+        // 자료구조가 나중에 이해가 되서, 이렇게 바꿔야겠다.
+        let items = new Array(13)
+        for (let i = 0; i < items.length; i++) {
+            items[i] = {}
+        }
+
         let user_data = new Array(5)
+        user_data[0] = ''
+        user_data[1] = 100
+        for (let i = 2; i < user_data.length; i++) {
+            user_data[i] = 0
+        }
+
+        let factory = new Array(6)
+        for (let i = 0; i < factory.length; i++) {
+            factory[i] = {}
+        }
+
+        let table_color = new Array(13)
+        for (let i = 0; i < 9; i++) {
+            if (i % 3 == 0) {
+                table_color[i] = "table-light"
+            } else if (i % 3 == 1) {
+                table_color[i] = "table-success"
+            } else {
+                table_color[i] = "table-primary"
+            }
+        }
+        table_color[9] = "table-success"
+        table_color[10] = "table-primary"
+        table_color[11] = "table-danger"
+        table_color[12] = "table-info"
 
         $(document).ready(function () {
             set_temp()
@@ -97,6 +130,7 @@
         }
 
         function set_price() {
+
             $.ajax({
                 type: "GET",
                 url: "/today_price",
@@ -110,25 +144,90 @@
                     $('html').css("cursor", "auto");
                 },
                 success: function (response) {
-                    let rows = response['daily_price'][0]
-                    for(let i=0; i<price.length; i++){
-                        let str = '#price_'+i
-                        price[i] = rows[i]
-                        $(str).text(price[i])
+                    let rows = response["daily_price"]
+
+                    for (let i = 0; i < items.length; i++) {
+                        items[i]['name'] = rows[i]["name"]
+                        items[i]['price'] = Number(rows[i]["price"])
+                        items[i]['image'] = rows[i]["image"]
+
+                        let price_id = "price_" + i
+                        let input_id = "input_" + i
+
+                        let temp_html = `<tr class=${table_color[i]}>
+                                            <th scope="row">
+                                                <img width="25" src=${items[i]['image']} />
+                                            </th>
+                                            <td style="text-overflow: ellipsis;
+                                                                        overflow: hidden;
+                                                                        white-space : nowrap;">${items[i]['name']}</td>
+                                            <td id=${price_id}>${items[i]['price']}</td>
+                                            <td><input id=${input_id} style="width: 55px; height: 25px;" type="text" class="form-control">
+                                            </td>
+                                         </tr>`
+
+                        if (i < 9) {
+                            $('#table_1').append(temp_html)
+                        } else {
+                            $('#table_2').append(temp_html)
+                        }
                     }
+
+                    set_factory()
                 }
             })
         }
 
+        function set_factory() {
+            console.log(user_data[3])
+            console.log(items[0]['price'])
+
+            factory[0]['product_cost'] = Math.floor(203 * (100 - user_data[3]) / 100) + (0.56 * items[0]['price'] + 2.8 * items[1]['price'] + 0.7 * items[2]['price'])
+            factory[1]['product_cost'] = Math.floor(205 * (100 - user_data[3]) / 100) + (0.64 * items[0]['price'] + 2.6 * items[1]['price'] + 0.8 * items[2]['price'])
+            factory[2]['product_cost'] = Math.floor(250 * (100 - user_data[3]) / 100) + (0.94 * items[0]['price'] + 2.9 * items[1]['price'] + 1.6 * items[2]['price'])
+            factory[3]['product_cost'] = Math.floor(300 * (100 - user_data[3]) / 100) + (1.07 * items[0]['price'] + 5.1 * items[1]['price'] + 5.2 * items[2]['price'])
+            factory[4]['product_cost'] = Math.floor(300 * (100 - user_data[3]) / 100) + (1.42 * items[3]['price'] + 6.9 * items[4]['price'] + 5.2 * items[5]['price'])
+            factory[5]['product_cost'] = Math.floor(300 * (100 - user_data[3]) / 100) + (1.42 * items[6]['price'] + 6.9 * items[7]['price'] + 5.2 * items[8]['price'])
+
+            factory[0]['sales'] = 30 * items[9]['price']
+            factory[1]['sales'] = 30 * items[10]['price']
+            factory[2]['sales'] = 20 * items[11]['price']
+            factory[3]['sales'] = 15 * items[12]['price']
+            factory[4]['sales'] = 15 * items[12]['price']
+            factory[5]['sales'] = 15 * items[12]['price']
+
+            for (let i = 0; i < factory.length; i++) {
+                factory[i]['name'] = items[i]['name']
+                factory[i]['profit'] = factory[i]['product_cost'] - factory[i]['sales']
+
+            }
+
+
+        }
+
         function save_user() {
 
-            for (let i = 0; i < user_data.length; i++) {
+            // 양식 체크
+            for (let i = 0; i < 5; i++) {
                 let string = '#user_data_' + i
 
                 if (i == 0) {
-                    user_data[i] = $(string).val()
+                    user_data[i] = $(string).val().trim()
+
+                    if (user_data[i] == '') {
+                        alert('저장할 닉네임을 적어주세요.')
+                        $(string).val("")
+                        $(string).focus()
+                        return
+                    }
                 } else {
-                    user_data[i] = Number($(string).val())
+                    user_data[i] = Number($(string).val().trim())
+
+                    if (user_data[i] == '') {
+                        user_data[i] = 0
+                        $(string).val("0")
+                    }
+
                     if (isNaN(user_data[i])) {
                         alert('숫자만 입력해주세요.')
                         $(string).val("")
@@ -136,13 +235,23 @@
                         return
                     }
 
-                    if (user_data[i] == '') {
-                        user_data[i] = 0
+                    if (i == 1 && user_data[i] < 100) {
+                        alert('영지의 기운 회복량은 기본이 100 입니다!')
+                        $(string).val("100")
+                        $(string).focus()
+                        return
+                    }
+
+                    if (i > 1 && (user_data[i] < 0 || user_data[i] > 100)) {
+                        alert('불가능한 수치입니다.')
                         $(string).val("0")
+                        $(string).focus()
+                        return
                     }
                 }
             }
 
+            console.log(user_data)
             $.ajax({
                 type: "POST",
                 url: "/save_user",
@@ -201,32 +310,21 @@
                 success: function (response) {
                     alert('최저가 검색 완료')
                     for (let i = 0; i < response['price_list'].length; i++) {
-                        price[i] = response['price_list'][i]
+                        items[i]['price'] = response['price_list'][i]
                         let price_name = '#price_' + i
-                        $(price_name).text(price[i])
+                        $(price_name).text(items[i]['price'])
                     }
                 }
             })
         }
 
         function modify() {
-            for (let i = 0; i < 9; i++) {
+            for (let i = 0; i < 13; i++) {
                 let input_name = '#input_' + i
                 let price_name = '#price_' + i
                 if ($(input_name).val().length != 0) {
                     $(price_name).text($(input_name).val())
-                    price[i] = Number($(input_name).val())
-                }
-            }
-        }
-
-        function modify2() {
-            for (let i = 9; i < 13; i++) {
-                let input_name = '#input_' + i
-                let price_name = '#price_' + i
-                if ($(input_name).val().length != 0) {
-                    $(price_name).text($(input_name).val())
-                    price[i] = Number($(input_name).val())
+                    items[i]['price'] = Number($(input_name).val())
                 }
             }
         }
@@ -237,7 +335,7 @@
     <h1>디붕이네 공장</h1>
     <p>현재기온: <span id="temp">36</span>도</p>
     <p>크롤링 연습합니다.</p>
-    <button onclick="crawling()" type="button" class="btn btn-dark">크롤링</button>
+    <button onclick="set_factory()" type="button" class="btn btn-dark">크롤링</button>
 </div>
 <div class="content">
     <div class="left">
@@ -284,160 +382,106 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">재료</th>
-                        <th scope="col">가격</th>
-                        <th scope="col">수정</th>
+                        <th scope="col" style="width: 15%">#</th>
+                        <th scope="col" style="width: 40%">재료</th>
+                        <th scope="col" style="width: 20%">가격</th>
+                        <th scope="col" style="width: 25%">수정</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr class="table-light">
-                        <th scope="row">
-                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_3.png"/>
-                        </th>
-                        <td>고대 유물</td>
-                        <td id="price_0"></td>
-                        <td><input id="input_0" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
+                    <tbody id="table_1">
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col" style="width: 15%">#</th>
+                        <th scope="col" style="width: 40%">재료</th>
+                        <th scope="col" style="width: 20%">가격</th>
+                        <th scope="col" style="width: 25%">수정</th>
                     </tr>
-                    <tr class="table-success">
-                        <th scope="row">
-                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_4.png"/>
-                        </th>
-                        <td>희귀한 유물</td>
-                        <td id="price_1"></td>
-                        <td><input id="input_1" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-primary">
-                        <th scope="row">
-                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_11.png"/>
-                        </th>
-                        <td>오레하 유물</td>
-                        <td id="price_2"></td>
-                        <td><input id="input_2" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-light">
-                        <th scope="row">
-                            <img width="25"
-                                 src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_1_142.png"/>
-                        </th>
-                        <td>생선</td>
-                        <td id="price_3"></td>
-                        <td><input id="input_3" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-success">
-                        <th scope="row">
-                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_8_72.png"/>
-                        </th>
-                        <td>자연산 진주</td>
-                        <td id="price_4"></td>
-                        <td><input id="input_4" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-primary">
-                        <th scope="row">
-                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_8_74.png"/>
-                        </th>
-                        <td>오레하 태양 잉어</td>
-                        <td id="price_5"></td>
-                        <td><input id="input_5" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-light">
-                        <th scope="row">
-                            <img width="25"
-                                 src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_2_192.png"/>
-                        </th>
-                        <td>두툼한 생고기</td>
-                        <td id="price_6"></td>
-                        <td><input id="input_6" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-success">
-                        <th scope="row">
-                            <img width="25"
-                                 src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_2_204.png"/>
-                        </th>
-                        <td>질긴 가죽</td>
-                        <td id="price_7"></td>
-                        <td><input id="input_7" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-primary">
-                        <th scope="row">
-                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_8_67.png"/>
-                        </th>
-                        <td>오레하 두툼한...</td>
-                        <td id="price_8"></td>
-                        <td><input id="input_8" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
+                    </thead>
+                    <tbody id="table_2" style="">
                     </tbody>
                 </table>
                 <div>
                     <button onclick="modify()" type="button" class="btn btn-primary">가격 수정하기</button>
-                </div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">재료</th>
-                        <th scope="col">가격</th>
-                        <th scope="col">수정</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="table-success">
-                        <th scope="row">
-                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_70.png"/>
-                        </th>
-                        <td>하급 오레하</td>
-                        <td id="price_9"></td>
-                        <td><input id="input_9" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-primary">
-                        <th scope="row">
-                            <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_71.png"/>
-                        </th>
-                        <td>중급 오레하</td>
-                        <td id="price_10"></td>
-                        <td><input id="input_10" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-danger">
-                        <th scope="row">
-                            <img width="25"
-                                 src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_8_109.png"/>
-                        </th>
-                        <td>상급 오레하</td>
-                        <td id="price_11"></td>
-                        <td><input id="input_11" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    <tr class="table-info">
-                        <th scope="row">
-                            <img width="25"
-                                 src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_11_29.png"/>
-                        </th>
-                        <td>최상급 오레하</td>
-                        <td id="price_12"></td>
-                        <td><input id="input_12" style="width: 55px; height: 25px;" type="text" class="form-control">
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div>
-                    <button onclick="modify2()" type="button" class="btn btn-primary">가격 수정하기</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="right">
         <h1>디붕이네 공장</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col" style="width: 10%">#</th>
+                <th scope="col" style="width: 40%">재료</th>
+                <th scope="col" style="width: 15%">순이익</th>
+                <th scope="col" style="width: 15%">하루 이익</th>
+                <th scope="col" style="width: 20%">유지비/day</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="table-success">
+                <th scope="row">
+                    <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_70.png"/>
+                </th>
+                <td>하급 오레하</td>
+                <td id="price_9"></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-primary">
+                <th scope="row">
+                    <img width="25" src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_9_71.png"/>
+                </th>
+                <td>중급 오레하</td>
+                <td id="price_10"></td>
+                <td><input id="input_10" style="width: 55px; height: 25px;" type="text" class="form-control">
+                </td>
+            </tr>
+            <tr class="table-danger">
+                <th scope="row">
+                    <img width="25"
+                         src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_8_109.png"/>
+                </th>
+                <td>상급 오레하</td>
+                <td id="price_11"></td>
+                <td><input id="input_11" style="width: 55px; height: 25px;" type="text" class="form-control">
+                </td>
+            </tr>
+            <tr class="table-info">
+                <th scope="row">
+                    <img width="25"
+                         src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_11_29.png"/>
+                </th>
+                <td>최상급 (고고학)</td>
+                <td id="price_12"></td>
+                <td><input id="input_12" style="width: 55px; height: 25px;" type="text" class="form-control">
+                </td>
+            </tr>
+            <tr class="table-info">
+                <th scope="row">
+                    <img width="25"
+                         src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_11_29.png"/>
+                </th>
+                <td>최상급 (낚시)</td>
+                <td id="price_12"></td>
+                <td><input id="input_12" style="width: 55px; height: 25px;" type="text" class="form-control">
+                </td>
+            </tr>
+            <tr class="table-info">
+                <th scope="row">
+                    <img width="25"
+                         src="https://cdn-lostark.game.onstove.com/EFUI_IconAtlas/Use/Use_11_29.png"/>
+                </th>
+                <td>최상급 (수렵)</td>
+                <td id="price_12"></td>
+                <td><input id="input_12" style="width: 55px; height: 25px;" type="text" class="form-control">
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>
