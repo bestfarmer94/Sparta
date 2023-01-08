@@ -18,33 +18,33 @@ pwd = "1q2w3e4r!"
 
 # driver = webdriver.Chrome('./chromedriver.exe', chrome_options=options)
 driver = webdriver.Chrome()
-driver.get("https://lostark.game.onstove.com/Market")
+driver.get("https://lostark.game.onstove.com/Market/BookMark")
 
 elem = driver.find_element(By.XPATH, '//*[@id="user_id"]')
 elem.send_keys(id)
 elem = driver.find_element(By.XPATH, '//*[@id="user_pwd"]')
 elem.send_keys(pwd)
 elem.send_keys(Keys.RETURN)
-time.sleep(0.5)
-elem = driver.find_element(By.XPATH, '//*[@id="lostark-wrapper"]/div/main/div/div[2]/a[2]').click()
-time.sleep(0.5)
-elem = driver.find_element(By.XPATH, '// *[ @ id = "itemList"] / thead / tr / th[1] / a').click()
-time.sleep(0.5)
-
-itemDB = []
-for i in range(1, 10):
-    a = str(i)
-    xpath = '//*[@id="tbodyItemList"]/tr[' + a + ']/td[1]/div/span[1]/img'
-    xpath2 = '//*[@id="tbodyItemList"]/tr[' + a + ']/td[2]/div/em'
-    elem1 = driver.find_element(By.XPATH, xpath)
-    elem2 = driver.find_element(By.XPATH, xpath2)
-    itemDB.append({
-        'name': elem1.get_attribute('alt'),
-        'price': elem2.text,
-        'image': elem1.get_attribute('src')
-    })
-
-print(itemDB)
+time.sleep(10)
+# elem = driver.find_element(By.XPATH, '//*[@id="lostark-wrapper"]/div/main/div/div[2]/a[2]').click()
+# time.sleep(0.5)
+# elem = driver.find_element(By.XPATH, '// *[ @ id = "itemList"] / thead / tr / th[1] / a').click()
+# time.sleep(0.5)
+#
+# itemDB = []
+# for i in range(1, 10):
+#     a = str(i)
+#     xpath = '//*[@id="tbodyItemList"]/tr[' + a + ']/td[1]/div/span[1]/img'
+#     xpath2 = '//*[@id="tbodyItemList"]/tr[' + a + ']/td[2]/div/em'
+#     elem1 = driver.find_element(By.XPATH, xpath)
+#     elem2 = driver.find_element(By.XPATH, xpath2)
+#     itemDB.append({
+#         'name': elem1.get_attribute('alt'),
+#         'price': elem2.text,
+#         'image': elem1.get_attribute('src')
+#     })
+#
+# print(itemDB)
 # elem = driver.find_element(By.XPATH,
 #                            '//*[@id="lostark-wrapper"]/div/main/div/div[1]/div[1]/div[2]/button').click()
 # time.sleep(0.5)

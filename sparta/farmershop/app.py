@@ -1,7 +1,4 @@
-import json
-
 from pymongo import MongoClient
-
 client = MongoClient('mongodb+srv://test:sparta@cluster0.8vasl6v.mongodb.net/Cluster0?retryWrites=true&w=majority')
 db = client.dbsparta
 
@@ -12,14 +9,11 @@ import time
 import datetime
 
 from flask import Flask, render_template, request, jsonify
-
 app = Flask(__name__)
-
 
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 @app.route('/today_price')
 def today_price():
@@ -32,17 +26,15 @@ def today_price():
         id = "sjasjaruddus@naver.com"
         pwd = "1q2w3e4r!"
 
-        # driver = webdriver.Chrome('./chromedriver.exe', chrome_options=options)
-        driver = webdriver.Chrome()
-        driver.get("https://lostark.game.onstove.com/Market")
+        driver = webdriver.Chrome('./chromedriver.exe', chrome_options=options)
+        driver.get("https://lostark.game.onstove.com//Market/BookMark")
 
+        time.sleep(0.5)
         elem = driver.find_element(By.XPATH, '//*[@id="user_id"]')
         elem.send_keys(id)
         elem = driver.find_element(By.XPATH, '//*[@id="user_pwd"]')
         elem.send_keys(pwd)
         elem.send_keys(Keys.RETURN)
-        time.sleep(0.5)
-        elem = driver.find_element(By.XPATH, '//*[@id="lostark-wrapper"]/div/main/div/div[2]/a[2]').click()
         time.sleep(0.5)
         elem = driver.find_element(By.XPATH, '// *[ @ id = "itemList"] / thead / tr / th[1] / a').click()
         time.sleep(0.5)
@@ -98,10 +90,10 @@ def today_price():
         db.itemDB.insert_many(itemDB)
 
     itemDB = list(db.itemDB.find({}, {"_id": False}))
+    crystal = list(db.crystal.find({}, {"_id": False}))
 
-    print(itemDB[0]['name'])
-    print(itemDB)
-    return jsonify({"daily_price": itemDB})
+    return jsonify({"daily_price": itemDB,
+                    "crystal": crystal})
 
 @app.route("/save_user", methods=["POST"])
 def save_user():
@@ -126,7 +118,6 @@ def save_user():
     db.user_data.insert_one(doc)
     return jsonify({"msg": msg})
 
-
 @app.route("/load_user", methods=["POST"])
 def load_user():
     data_receive = request.form['data_give']
@@ -137,22 +128,23 @@ def load_user():
     else:
         return jsonify({"user_data": "해당 닉네임으로 저장된 영지 정보가 없습니다."})
 
-
 @app.route("/crawling", methods=["GET"])
 def crawling():
     id = "sjasjaruddus@naver.com"
     pwd = "1q2w3e4r!"
 
-    driver = webdriver.Chrome()
-    driver.get("https://lostark.game.onstove.com/Market")
+    options = webdriver.ChromeOptions()
+    options.add_argument("headless")
 
+    driver = webdriver.Chrome('./chromedriver.exe', chrome_options=options)
+    driver.get("https://lostark.game.onstove.com/Market/BookMark")
+
+    time.sleep(0.5)
     elem = driver.find_element(By.XPATH, '//*[@id="user_id"]')
     elem.send_keys(id)
     elem = driver.find_element(By.XPATH, '//*[@id="user_pwd"]')
     elem.send_keys(pwd)
     elem.send_keys(Keys.RETURN)
-    time.sleep(0.5)
-    elem = driver.find_element(By.XPATH, '//*[@id="lostark-wrapper"]/div/main/div/div[2]/a[2]').click()
     time.sleep(0.5)
     elem = driver.find_element(By.XPATH, '// *[ @ id = "itemList"] / thead / tr / th[1] / a').click()
     time.sleep(0.5)
@@ -165,6 +157,18 @@ def crawling():
         price_list[i] = elem2.text
 
     return jsonify({"price_list": price_list})
+
+@app.route("/save_crystal", methods=["POST"])
+def save_crystal():
+    data_receive = request.form["data_give"]
+    print(data_receive)
+    doc = {
+        "crystal": data_receive
+    }
+
+    db.crystal.delete_many({})
+    db.crystal.insert_one(doc)
+    return jsonify({"msg": "msg"})
 
 def transform(num):
     if num == 0:
@@ -193,7 +197,6 @@ def transform(num):
         return 1
     if num == 12:
         return 2
-
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
